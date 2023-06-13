@@ -1,0 +1,123 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Create/Edit Links{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+  .truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    line-height:1;
+    max-width: 350px;
+  }
+  body {
+      padding-top: 50px;
+  }
+  .mb-2 {
+      margin-right: 10px;
+  }
+
+  td, th {
+      text-align: center;
+  }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+<script>
+  // Copies data-short_url attribute value to the modal input field
+  $(document).ready(function() {
+    $('a[data-toggle=modal], button[data-toggle=modal]').click(function () {
+      $('#short_url').val( $(this).data('short_url')); 
+      $('#long_url').val( $(this).data('long_url')); 
+      $('#description').val( $(this).data('description')); 
+    })
+  });
+</script>
+{% endblock %}
+
+
+
+{% block content %}
+<center>
+  <div class="container">
+    <form action="go/create/form" method="POST" class="form-inline">
+      <div class="form-group mb-2">
+        <label for="create_short_url">Short URL</label>
+        <input type="text"  class="form-control" id="create_short_url" name="create_short_url" placeholder="Short URL">
+      </div>
+      <div class="form-group mb-2">
+        <label for="create_long_url" >Long URL</label>
+        <input type="text" class="form-control" id="create_long_url" name="create_long_url" placeholder="Long URL">
+      </div>
+      <div class="form-group mb-2">
+        <label for="create_description" >Description</label>
+        <input type="text" class="form-control" id="create_description" name="create_description" placeholder="Description  ">
+      </div>
+      <button type="submit" class="btn btn-primary mb-2">Create</button>
+    </form>
+    
+    <br/><br/>
+    <table class="table table-responsive" style="width:80%" border="1">
+        <thead>
+            <tr>
+                <th>Short URL</th>
+                <th>Long URL</th>
+                <th>Description</th>
+                <th>Hits</th>
+                <th colspan="2">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for link in links %}
+            <tr>
+                <td>{{ link.short_url }}</td>
+                <td><center><p class="truncate"> <a title="{{ link.long_url }}" href="http://{{ link.long_url }}"> {{ link.long_url }}</a></p></center></td>
+                <td><center><p title="{{ link.description }}" class="truncate">{{ link.description }}</p></center></td>
+                <td>{{ link.hits }}</td>
+                <td><button type="button" class="btn btn-success" data-toggle="modal"
+                        data-target="#update_link" data-short_url="{{link['short_url']}}" data-long_url="{{link['long_url']}}" data-description="{{link['description']}}">Update</button></td>
+                <td><a href="go/delete/{{ link.short_url }}" type="button" class="btn btn-danger" >Delete</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+</center>
+
+
+<!-- Modal for updating a link -->
+<div class="modal fade" id="update_link" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myModalLabel">Edit Link</h4>
+          </div>
+          <form action="go/update" method="post">
+              <div class="modal-body">
+                  <input type="hidden" id="short_url" class="form-control" name="short_url" placeholder="Short URL" />
+                  <div class="form-group row">
+                      <label for="long_url" class="col-xs-2 control-label">Long URL</label>
+                      <div class="col-xs-10">
+                          <input type="text" id="long_url" class="form-control" name="long_url" placeholder="Long URL" />
+                      </div>
+                  </div>
+                  <div class="form-group row">
+                      <label for="description" class="col-xs-2 control-label">Description</label>
+                      <div class="col-xs-10">
+                          <input type="text" id="description" class="form-control" name="description" placeholder="Description" />
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-success">Submit</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+<!-- End Modal -->
+{% endblock %}
+
