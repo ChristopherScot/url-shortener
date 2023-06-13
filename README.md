@@ -4,14 +4,15 @@ This was written primarily as an introduction to using [Zappa](https://github.co
 
 ## Extenal Services
 
-#### AWS-CDK
-    Installed with: `npm install -g aws-cdk`
+## AWS-CDK
+   Installed with: `npm install -g aws-cdk`
 
-#### Pulumi
-    I've used Pulumi to create the S3 Buckets, DynamodDB Tables etc. that Zappa doesn't create for 
+## Pulumi
+
+   I've used Pulumi to create the S3 Buckets, DynamodDB Tables etc. that Zappa doesn't create for 
 	me. If you wish to use it follow [this tutorial.](https://www.pulumi.com/docs/clouds/aws/get-started/) 
 
-	The code that I used for this is here:
+   The code that I used for this is here:Cancel changes
 	<details>
 	```python
 		"""An AWS Python Pulumi program"""
@@ -99,11 +100,11 @@ This was written primarily as an introduction to using [Zappa](https://github.co
 	Note that you don't NEED to use Pulumi at all and all of this can just be created in the AWS console/web ui. 
 
 #### Zappa
-	- Make sure you have an AWS Profile setup and have run `aws configure`
-	- Run `zappa init`
-	- If you want to setup an https site follow [these](https://github.com/zappa/Zappa#deploying-to-a-domain-with-aws-certificate-manager) directions
-	- Run zappa deploy <env> when you are ready to deploy this to your domain. 
-	- Run zappa update <env> after making a code change. 
+- Make sure you have an AWS Profile setup and have run `aws configure`
+- Run `zappa init`
+- If you want to setup an https site follow [these](https://github.com/zappa/Zappa#deploying-to-a-domain-with-aws-certificate-manager) directions
+- Run zappa deploy <env> when you are ready to deploy this to your domain. 
+- Run zappa update <env> after making a code change. 
 
 #### DynamoDB
 	Two tables were created here: 
