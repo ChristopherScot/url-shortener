@@ -12,7 +12,7 @@ This was written primarily as an introduction to using [Zappa](https://github.co
 - Run zappa update <env> after making a code change. 
 
 ## DynamoDB
-#####Two tables were created here: 
+##### Two tables were created here: 
 
 <b> users </b>
 - username (primary key)
