@@ -61,89 +61,91 @@ where <These> are obviously replaced by the env value you want to set it to.
 	me. If you wish to use it follow [this tutorial.](https://www.pulumi.com/docs/clouds/aws/get-started/) 
 
 #### The code that I used for this is here:
-	<details>
-	```python
-		"""An AWS Python Pulumi program"""
+		
+<details>
+		
+```python
+	"""An AWS Python Pulumi program"""
 
-		import pulumi
-		import os
-		import pulumi_aws as aws
-		from werkzeug.security import generate_password_hash
+	import pulumi
+	import os
+	import pulumi_aws as aws
+	from werkzeug.security import generate_password_hash
 
-		bucket_name = os.getenv('TEMPLATE_BUCKET') or 'templates'
-		links_table_name = os.getenv('LINKS_TABLE') or 'links'
-		users_table_name = os.getenv('USERS_TABLE') or 'users'
-		username = os.getenv('USERNAME') or 'test'
-		password = os.getenv('PASSWORD') or 'password'
+	bucket_name = os.getenv('TEMPLATE_BUCKET') or 'templates'
+	links_table_name = os.getenv('LINKS_TABLE') or 'links'
+	users_table_name = os.getenv('USERS_TABLE') or 'users'
+	username = os.getenv('USERNAME') or 'test'
+	password = os.getenv('PASSWORD') or 'password'
 
-		mainPage = pulumi.asset.FileAsset('../templates/index.html')
-		loginPage = pulumi.asset.FileAsset('../templates/login.html')
-
-
-		# Create an AWS resource (S3 Bucket)
-		bucket = aws.s3.Bucket(bucket_name, bucket=bucket_name)
-		mainPage_s3 = aws.s3.BucketObject("index.html",
-			bucket=bucket.id,
-			source=mainPage)
-
-		loginPage_s3 = aws.s3.BucketObject("login.html",
-			bucket=bucket.id,
-			source=loginPage)
-
-		# Export the name of the bucket
-		pulumi.export('bucket_name', bucket.bucket)
+	mainPage = pulumi.asset.FileAsset('../templates/index.html')
+	loginPage = pulumi.asset.FileAsset('../templates/login.html')
 
 
-		url_shortener_table = aws.dynamodb.Table(links_table_name,
-			name=links_table_name,
-			attributes=[
-				aws.dynamodb.TableAttributeArgs(
-					name="short_url",
-					type="S",
-				),		   
-			],
-			billing_mode="PROVISIONED",
-			hash_key="short_url",
-			read_capacity=1,
-			write_capacity=1)
+	# Create an AWS resource (S3 Bucket)
+	bucket = aws.s3.Bucket(bucket_name, bucket=bucket_name)
+	mainPage_s3 = aws.s3.BucketObject("index.html",
+		bucket=bucket.id,
+		source=mainPage)
 
-		link = aws.dynamodb.TableItem(
-			"example-link", 
-			table_name=url_shortener_table.name, 
-			hash_key=url_shortener_table.hash_key, 
-			item="""{
-				"short_url": {"S": "g"},
-				"long_url": {"S": "google.com"},
-				"hits": {"N": "10"},
-				"description": {"S": "It is google..."}
-				}"""
-			)
+	loginPage_s3 = aws.s3.BucketObject("login.html",
+		bucket=bucket.id,
+		source=loginPage)
 
-		users_table = aws.dynamodb.Table(users_table_name,
-			name=users_table_name,
-			attributes=[
-				aws.dynamodb.TableAttributeArgs(
-					name="username",
-					type="S",
-				),		   
-			],
-			billing_mode="PROVISIONED",
-			hash_key="username",
-			read_capacity=1,
-			write_capacity=1)
+	# Export the name of the bucket
+	pulumi.export('bucket_name', bucket.bucket)
 
-		password = generate_password_hash(password)
-		item = f'{{"username": {{"S": "{username}"}}, "password": {{"S": "{password}"}}, "service": {{"S": "url-shortener"}}}}'
 
-		user = aws.dynamodb.TableItem(
-			"example-user", 
-			table_name=users_table.name, 
-			hash_key=users_table.hash_key, 
-			item=item
-			)
+	url_shortener_table = aws.dynamodb.Table(links_table_name,
+		name=links_table_name,
+		attributes=[
+			aws.dynamodb.TableAttributeArgs(
+				name="short_url",
+				type="S",
+			),		   
+		],
+		billing_mode="PROVISIONED",
+		hash_key="short_url",
+		read_capacity=1,
+		write_capacity=1)
 
-		pulumi.export(users_table_name, users_table.name)
-		```
-	</details>
+	link = aws.dynamodb.TableItem(
+		"example-link", 
+		table_name=url_shortener_table.name, 
+		hash_key=url_shortener_table.hash_key, 
+		item="""{
+			"short_url": {"S": "g"},
+			"long_url": {"S": "google.com"},
+			"hits": {"N": "10"},
+			"description": {"S": "It is google..."}
+			}"""
+		)
+
+	users_table = aws.dynamodb.Table(users_table_name,
+		name=users_table_name,
+		attributes=[
+			aws.dynamodb.TableAttributeArgs(
+				name="username",
+				type="S",
+			),		   
+		],
+		billing_mode="PROVISIONED",
+		hash_key="username",
+		read_capacity=1,
+		write_capacity=1)
+
+	password = generate_password_hash(password)
+	item = f'{{"username": {{"S": "{username}"}}, "password": {{"S": "{password}"}}, "service": {{"S": "url-shortener"}}}}'
+
+	user = aws.dynamodb.TableItem(
+		"example-user", 
+		table_name=users_table.name, 
+		hash_key=users_table.hash_key, 
+		item=item
+		)
+
+	pulumi.export(users_table_name, users_table.name)
+```
+</details>
 	
 ##### Note: You don't NEED to use Pulumi at all and all of this can just be created in the AWS console/web ui.
